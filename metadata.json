@@ -1,0 +1,5 @@
+{
+  "name": "PlayShotGen",
+  "description": "Streamline the generation of Google Play Store–compliant screenshots across multiple Android device categories from user-uploaded images.",
+  "requestFramePermissions": []
+}
