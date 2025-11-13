@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { UploadedFile } from '../types';
 import { MAX_FILE_SIZE, MAX_UPLOAD_COUNT, SUPPORTED_FORMATS } from '../constants';
@@ -99,29 +98,29 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ title, description
     };
 
     return (
-        <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 h-full flex flex-col">
-            <h3 className="text-xl font-bold text-white">{title}</h3>
-            <p className="text-gray-400 mt-1 mb-4">{description}</p>
+        <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl p-6 h-full flex flex-col shadow-sm">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h3>
+            <p className="text-gray-500 dark:text-gray-400 mt-1 mb-4">{description}</p>
             
             <div
-                className={`flex-grow border-2 border-dashed rounded-lg p-6 text-center flex flex-col justify-center items-center transition-colors duration-300 ${isDragging ? 'border-blue-500 bg-blue-500/10' : 'border-gray-600'}`}
+                className={`flex-grow border-2 border-dashed rounded-lg p-6 text-center flex flex-col justify-center items-center transition-colors duration-300 ${isDragging ? 'border-blue-500 bg-blue-500/10' : 'border-gray-300 dark:border-gray-600'}`}
                 onDragEnter={onDragEnter}
                 onDragLeave={onDragLeave}
                 onDragOver={onDragOver}
                 onDrop={onDrop}
             >
-                <UploadIcon className="w-12 h-12 text-gray-500 mb-2" />
-                <p className="text-gray-400 mb-2">Drag & drop files here, or</p>
-                <label htmlFor={`file-upload-${title.replace(/\s+/g, '-')}`} className="cursor-pointer font-semibold text-blue-400 hover:text-blue-300">
+                <UploadIcon className="w-12 h-12 text-gray-400 dark:text-gray-500 mb-2" />
+                <p className="text-gray-500 dark:text-gray-400 mb-2">Drag & drop files here, or</p>
+                <label htmlFor={`file-upload-${title.replace(/\s+/g, '-')}`} className="cursor-pointer font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
                     click to browse
                     <input id={`file-upload-${title.replace(/\s+/g, '-')}`} name="file-upload" type="file" className="sr-only" multiple accept={SUPPORTED_FORMATS.join(',')} onChange={onFileChange} />
                 </label>
-                {error && <p className="text-red-400 mt-2 text-sm">{error}</p>}
+                {error && <p className="text-red-500 dark:text-red-400 mt-2 text-sm">{error}</p>}
             </div>
 
             {files.length > 0 && (
                 <div className="mt-6">
-                    <h4 className="font-semibold text-gray-300 mb-2">Previews ({files.length}/{MAX_UPLOAD_COUNT})</h4>
+                    <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Previews ({files.length}/{MAX_UPLOAD_COUNT})</h4>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-64 overflow-y-auto pr-2">
                         {files.map((uploadedFile) => (
                             <div key={uploadedFile.id} className="relative group aspect-video">
