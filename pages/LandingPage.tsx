@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import MetaTags from '../components/MetaTags';
 import { CheckCircleIcon, UploadIcon, SettingsIcon, DownloadIcon } from '../components/Icons';
 
 const features = [
@@ -75,6 +76,43 @@ const testimonials = [
 
 const LandingPage: React.FC = () => {
   return (
+    <>
+      <MetaTags
+        title="PlayShotGen - Generate Google Play Store Screenshots"
+        description="Easily generate stunning and compliant Google Play Store screenshots for all Android device types with PlayShotGen by Varabit."
+        url="https://www.varabit.com/"
+        structuredData={[
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "PlayShotGen",
+            "url": "https://www.varabit.com/",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://www.varabit.com/dashboard?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Varabit",
+            "url": "https://www.varabit.com/",
+            "logo": "https://www.varabit.com/logo.png",
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "telephone": "+880-1722-895295",
+              "contactType": "Customer Service"
+            },
+            "sameAs": [
+              "https://facebook.com/varabit",
+              "https://twitter.com/varabit",
+              "https://linkedin.com/company/varabit",
+              "https://instagram.com/varabit"
+            ]
+          }
+        ]}
+      />
     <div>
       <div className="text-center">
         <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
@@ -235,6 +273,7 @@ const LandingPage: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

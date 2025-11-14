@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import MetaTags from '../components/MetaTags';
 import { SimpleImageUploader } from '../components/simpleimageuploader';
 import { UploadedFile, ProcessedImage, DeviceConfig } from '../types';
 import { DEVICE_CONFIGS } from '../constants';
@@ -123,9 +124,14 @@ const DashboardPage: React.FC = () => {
         };
     }, [downloadUrl]);
 
-    return (
-        <main className="flex-grow container mx-auto px-4 py-8">
-            {error && (
+      return (
+        <>
+          <MetaTags
+            title="Dashboard - PlayShotGen"
+            description="Generate Google Play Store screenshots for various devices. Upload your images and get compliant screenshots in a ZIP file."
+            url="https://www.varabit.com/dashboard"
+          />
+          <main className="flex-grow container mx-auto px-4 py-8">            {error && (
                 <div className="bg-red-100 border border-red-400 text-red-700 dark:bg-red-500/20 dark:border-red-500 dark:text-red-300 px-4 py-3 rounded-lg relative mb-6" role="alert">
                     <strong className="font-bold">Error: </strong>
                     <span className="block sm:inline">{error}</span>
@@ -298,8 +304,8 @@ const DashboardPage: React.FC = () => {
                     </div>
                 </div>
             )}
-        </main>
-    );
-};
+            </main>
+            </>
+          );};
 
 export default DashboardPage;

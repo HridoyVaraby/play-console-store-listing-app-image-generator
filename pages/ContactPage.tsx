@@ -1,7 +1,14 @@
 import React from 'react';
+import MetaTags from '../components/MetaTags';
 
 const ContactPage: React.FC = () => {
   return (
+    <>
+      <MetaTags
+        title="Contact Us - PlayShotGen"
+        description="Get in touch with PlayShotGen support team for any queries or feedback. Find our email, phone, and social media links."
+        url="https://www.varabit.com/contact"
+      />
     <div className="isolate bg-white dark:bg-gray-900 px-6 py-24 sm:py-32 lg:px-8">
       <div
         className="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]"
@@ -119,8 +126,38 @@ const ContactPage: React.FC = () => {
           </div>
         </dl>
       </div>
-    </div>
-  );
-};
+
+      <div className="mx-auto mt-16 max-w-xl sm:mt-20">
+        <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Follow Us</h3>
+        <div className="mt-4 flex space-x-6">
+          <a href="https://facebook.com/varabit" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+            <span className="sr-only">Facebook</span>
+            <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.776-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
+            </svg>
+          </a>
+          <a href="https://twitter.com/varabit" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+            <span className="sr-only">Twitter</span>
+            <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.007-.532A8.318 8.318 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012 7.02v.054a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+            </svg>
+          </a>
+          <a href="https://linkedin.com/company/varabit" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+            <span className="sr-only">LinkedIn</span>
+            <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path fillRule="evenodd" d="M19 0H5a5 5 0 00-5 5v14a5 5 0 005 5h14a5 5 0 005-5V5a5 5 0 00-5-5zM8 19H5V8h3v11zM6.5 6.732c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764c.967 0 1.75.79 1.75 1.764s-.783 1.764-1.75 1.764zM20 19h-3v-5.625c0-3.369-4-3.563-4 0V19h-3V8h3v1.765c1.396-2.586 7-2.777 7 2.476V19z" clipRule="evenodd" />
+            </svg>
+          </a>
+          <a href="https://instagram.com/varabit" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+            <span className="sr-only">Instagram</span>
+            <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path fillRule="evenodd" d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.277.072-1.684.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.35 1.535 20.682 1.123 19.892.818c-.765-.296-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.425.616.26 1.05.606 1.486 1.042.436.436.782.879 1.042 1.486.176.423.37 1.059.425 2.228.056 1.265.07 1.647.07 4.85s-.014 3.585-.07 4.85c-.055 1.17-.249 1.805-.425 2.227-.26.616-.606 1.05-.1042 1.486-.436.436-.879.782-1.486 1.042-.423.176-1.059.37-2.228.425-1.265.056-1.647.07-4.85.07s-3.585-.014-4.85-.07c-1.17-.055-1.805-.249-2.227-.425-.616-.26-1.05-.606-1.486-1.042-.436-.436-.782-.879-1.042-1.486-.176-.423-.37-1.059-.425-2.228-.056-1.265-.07-1.647-.07-4.85s.014-3.585.07-4.85c.055-1.17.249-1.805.425-2.227.26-.616.606-1.05 1.042-1.486.436-.436.879-.782 1.486-1.042.423-.176 1.059-.37 2.228-.425C8.415 2.176 8.797 2.16 12 2.16zm0 3.635c-3.405 0-6.17 2.764-6.17 6.17s2.764 6.17 6.17 6.17 6.17-2.764 6.17-6.17-2.764-6.17-6.17-6.17zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0-.795-.646-1.44-1.44-1.44-.795 0-1.44.646-1.44 1.44 0 .795.646 1.44 1.44 1.44.795 0 1.44-.646 1.44-1.44z" clipRule="evenodd" />
+            </svg>
+          </a>
+        </div>
+      </div>
+          </div>
+        </>
+      );};
 
 export default ContactPage;
