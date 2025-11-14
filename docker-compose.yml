@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  playshotgen:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.playshotgen.rule=Host(`playshotgen.yourdomain.com`)"
+      - "traefik.http.routers.playshotgen.tls=true"
+      - "traefik.http.routers.playshotgen.tls.certresolver=letsencrypt"

@@ -1,13 +1,12 @@
-import React, { useState, useCallback } from 'react';
-import { ImageUploader } from './components/ImageUploader';
+import React, { useState, useCallback, useEffect } from 'react';
+import { SimpleImageUploader } from './components/simpleimageuploader.tsx';
 import { UploadedFile, ProcessedImage, DeviceConfig } from './types';
 import { DEVICE_CONFIGS } from './constants';
-import { processImage } from './services/imageProcessor';
+import { processImage } from './services/simpleImageProcessor';
 import { generateZip } from './services/zipService';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { DownloadIcon, LoaderIcon } from './components/Icons';
-import { useTheme } from './hooks/useTheme';
+import { DownloadIcon, LoaderIcon, EyeIcon, XIcon } from './components/Icons';
 
 const App: React.FC = () => {
     const [portraitFiles, setPortraitFiles] = useState<UploadedFile[]>([]);
@@ -17,7 +16,8 @@ const App: React.FC = () => {
     const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
     const [processedFileCount, setProcessedFileCount] = useState(0);
     const [totalFileCount, setTotalFileCount] = useState(0);
-    const [theme, toggleTheme] = useTheme();
+    const [processedImages, setProcessedImages] = useState<ProcessedImage[]>([]);
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
 
     const handleGenerateClick = useCallback(async () => {
         if (portraitFiles.length === 0 && landscapeFiles.length === 0) {
@@ -28,7 +28,11 @@ const App: React.FC = () => {
         setIsLoading(true);
         setError(null);
         setDownloadUrl(null);
+        setProcessedImages([]);
         setProcessedFileCount(0);
+        
+        // Track filenames to handle duplicates
+        const filenameTracker = new Map<string, number>();
         
         const totalPortraitTargets = portraitFiles.length * 2; // phone, tablet
         const totalLandscapeTargets = landscapeFiles.length * 2; // 10inch, chromebook
@@ -41,9 +45,22 @@ const App: React.FC = () => {
                 setProcessedFileCount(prev => prev + 1);
                 const originalFileName = file.file.name;
                 const fileNameWithoutExtension = originalFileName.substring(0, originalFileName.lastIndexOf('.')) || originalFileName;
+                
+                // Handle duplicate filenames
+                const basePath = `${config.folder}/${fileNameWithoutExtension}`;
+                let finalPath = `${basePath}.png`;
+                
+                if (filenameTracker.has(finalPath)) {
+                    let counter = filenameTracker.get(finalPath)!;
+                    counter++;
+                    filenameTracker.set(finalPath, counter);
+                    finalPath = `${basePath}_${counter}.png`;
+                } else {
+                    filenameTracker.set(finalPath, 0);
+                }
 
                 return {
-                    path: `${config.folder}/${fileNameWithoutExtension}.png`,
+                    path: finalPath,
                     blob: blob,
                 };
             });
@@ -60,22 +77,57 @@ const App: React.FC = () => {
         });
 
         try {
-            const processedImages = await Promise.all(processingPromises);
-            const url = await generateZip(processedImages);
+            const processedImagesResult = await Promise.all(processingPromises);
+            setProcessedImages(processedImagesResult);
+            const url = await generateZip(processedImagesResult);
             setDownloadUrl(url);
         } catch (err) {
             console.error("Processing failed:", err);
-            setError("An error occurred during image processing. Please check the console.");
+            let errorMessage = "An error occurred during image processing. ";
+            
+            if (err instanceof Error) {
+                if (err.message.includes('corrupted')) {
+                    errorMessage = "Some images appear to be corrupted or in an unsupported format. Please check your files and try again.";
+                } else if (err.message.includes('exceeds')) {
+                    errorMessage = "Some files exceed the maximum size limit. Please ensure all images are under 10MB.";
+                } else if (err.message.includes('format')) {
+                    errorMessage = "Some files are in an unsupported format. Please use PNG, JPG, or JPEG files only.";
+                } else {
+                    errorMessage += err.message;
+                }
+            }
+            
+            setError(errorMessage);
         } finally {
             setIsLoading(false);
         }
     }, [portraitFiles, landscapeFiles]);
 
+    const handleDownloadSingle = useCallback((image: ProcessedImage) => {
+        const url = URL.createObjectURL(image.blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = image.path.replace(/\//g, '_');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }, []);
+
     const canGenerate = (portraitFiles.length > 0 || landscapeFiles.length > 0) && !isLoading;
+
+    // Cleanup blob URLs when component unmounts or when new images are generated
+    useEffect(() => {
+        return () => {
+            if (downloadUrl) {
+                URL.revokeObjectURL(downloadUrl);
+            }
+        };
+    }, [downloadUrl]);
 
     return (
         <div className="flex flex-col min-h-screen font-sans">
-            <Header theme={theme} toggleTheme={toggleTheme} />
+            <Header />
 
             <main className="flex-grow container mx-auto px-4 py-8">
                 {error && (
@@ -88,15 +140,23 @@ const App: React.FC = () => {
                     </div>
                 )}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <ImageUploader
-                        title="Phone & 7-inch Tablet Screenshots"
-                        description="Upload portrait-oriented images (e.g., 9:16 aspect ratio)."
+                    <SimpleImageUploader
+                        title="Phone + Tablet"
+                        description="Upload screenshots for Phone and 7-inch Tablet devices."
                         onFilesChange={setPortraitFiles}
+                        maxFiles={20}
+                        maxFileSize={10}
+                        acceptedFormats={['image/png', 'image/jpeg', 'image/jpg']}
+                        multiple={true}
                     />
-                    <ImageUploader
-                        title="10-inch Tablet & Chromebook Screenshots"
-                        description="Upload landscape-oriented images (e.g., 16:10 aspect ratio)."
+                    <SimpleImageUploader
+                        title="10-inch Tablet + Chromebook"
+                        description="Upload screenshots for 10-inch Tablet and Chromebook devices."
                         onFilesChange={setLandscapeFiles}
+                        maxFiles={20}
+                        maxFileSize={10}
+                        acceptedFormats={['image/png', 'image/jpeg', 'image/jpg']}
+                        multiple={true}
                     />
                 </div>
 
@@ -136,6 +196,111 @@ const App: React.FC = () => {
                             <DownloadIcon className="mr-3 h-6 w-6" />
                             Download .zip
                         </a>
+                    </div>
+                )}
+
+                {processedImages.length > 0 && !isLoading && (
+                    <div className="mt-12">
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">Generated Screenshots</h2>
+                        
+                        {/* Group images by device folder */}
+                        {Object.entries(
+                            processedImages.reduce((acc, img) => {
+                                const folder = img.path.split('/')[0];
+                                if (!acc[folder]) acc[folder] = [];
+                                acc[folder].push(img);
+                                return acc;
+                            }, {} as Record<string, ProcessedImage[]>)
+                        ).map(([folder, images]) => {
+                            // Get device config for dimensions
+                            const deviceConfig = Object.values(DEVICE_CONFIGS).find(c => c.folder === folder);
+                            const displayName = folder === '10inch' ? '10-inch Tablet' : 
+                                              deviceConfig?.name || folder.charAt(0).toUpperCase() + folder.slice(1);
+                            
+                            return (
+                                <div key={folder} className="mb-10">
+                                    <div className="flex items-baseline gap-3 mb-4">
+                                        <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+                                            {displayName}
+                                        </h3>
+                                        {deviceConfig && (
+                                            <span className="text-sm text-gray-600 dark:text-gray-400">
+                                                {deviceConfig.width}×{deviceConfig.height}
+                                            </span>
+                                        )}
+                                        <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                            ({images.length} {images.length === 1 ? 'image' : 'images'})
+                                        </span>
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                        {images.map((image, idx) => {
+                                            const imageUrl = URL.createObjectURL(image.blob);
+                                            const fileName = image.path.split('/').pop() || 'image.png';
+                                            
+                                            return (
+                                                <div key={idx} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300">
+                                                    <div className="relative group">
+                                                        <img
+                                                            src={imageUrl}
+                                                            alt={fileName}
+                                                            className="w-full h-48 object-contain bg-gray-50 dark:bg-gray-900 p-2"
+                                                        />
+                                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                                            <button
+                                                                onClick={() => setPreviewImage(imageUrl)}
+                                                                className="p-2 bg-white/90 hover:bg-white rounded-full transition-colors"
+                                                                title="Preview"
+                                                            >
+                                                                <EyeIcon className="w-5 h-5 text-gray-800" />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDownloadSingle(image)}
+                                                                className="p-2 bg-white/90 hover:bg-white rounded-full transition-colors"
+                                                                title="Download"
+                                                            >
+                                                                <DownloadIcon className="w-5 h-5 text-gray-800" />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div className="p-3">
+                                                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate" title={fileName}>
+                                                            {fileName}
+                                                        </p>
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                            {(image.blob.size / 1024).toFixed(2)} KB
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+
+                {/* Preview Modal */}
+                {previewImage && (
+                    <div 
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+                        onClick={() => setPreviewImage(null)}
+                    >
+                        <div className="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center">
+                            <button
+                                onClick={() => setPreviewImage(null)}
+                                className="absolute top-4 right-4 p-2 bg-white/90 hover:bg-white rounded-full transition-colors z-10"
+                                title="Close"
+                            >
+                                <XIcon className="w-6 h-6 text-gray-800" />
+                            </button>
+                            <img
+                                src={previewImage}
+                                alt="Preview"
+                                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+                                onClick={(e) => e.stopPropagation()}
+                            />
+                        </div>
                     </div>
                 )}
             </main>
