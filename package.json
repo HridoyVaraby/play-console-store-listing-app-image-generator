@@ -11,15 +11,8 @@
   "dependencies": {
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "jspdf": "^2.5.1",
-    "file-saver": "^2.0.5",
-    "localforage": "^1.10.0",
-    "uuid": "^9.0.1",
-    "fuse.js": "^7.0.0",
-    "pica": "^9.0.1",
-    "exif-js": "^2.3.0",
-    "color-thief": "^2.4.0",
-    "compressorjs": "^1.2.1"
+    "react-router-dom": "^6.28.0",
+    "react-helmet-async": "^2.0.5"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
@@ -27,7 +20,6 @@
     "typescript": "~5.8.2",
     "vite": "^6.2.0",
     "@types/file-saver": "^2.0.7",
-    "@types/uuid": "^9.0.7",
-    "@types/exif-js": "^2.3.3"
+    "@types/uuid": "^9.0.7"
   }
 }

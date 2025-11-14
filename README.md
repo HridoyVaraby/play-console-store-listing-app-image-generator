@@ -127,6 +127,15 @@ The application is ready for Dokploy deployment with the included `docker-compos
 - **Build Tool**: Vite
 - **Containerization**: Docker
 
+## About Varabit
+
+PlayShotGen is developed and maintained by **Varabit**, a software company dedicated to creating high-quality tools and solutions.
+
+For more information, visit our website: [varabit.com](https://varabit.com)
+
 ## License
 
 MIT License
+
+---
+© 2025 Varabit. All Rights Reserved.
